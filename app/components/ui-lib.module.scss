@@ -312,3 +312,18 @@
     }
   }
 }
+
+.tab-header {
+  display: flex;
+  flex-direction: row;
+  padding-top: 8px;
+  .tab-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    &:hover {
+      background-color: lightgray; // replace with your hover color
+    }
+  }
+}

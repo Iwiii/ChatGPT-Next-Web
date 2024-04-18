@@ -485,3 +485,28 @@ export function Selector<T>(props: {
     </div>
   );
 }
+
+interface TabHeaderProps {
+  tabs: string[];
+  activeTabIndex: number;
+  onTabChange: (index: number) => void;
+}
+
+export function TabHeader(props: TabHeaderProps) {
+  return (
+    <div className={styles["tab-header"]}>
+      {props.tabs.map((tabName,tabIndex) => (
+        <div
+          key={tabIndex}
+          className={styles["tab-item"]}
+          style={{
+            backgroundColor: props.activeTabIndex === tabIndex ? "var(--primary)" : "var(--background)",
+          }}
+          onClick={() => props.onTabChange(tabIndex)}
+        >
+          {tabName}
+        </div>
+      ))}
+    </div>
+  );
+}

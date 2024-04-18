@@ -128,7 +128,12 @@ const cn = {
   Settings: {
     Title: "设置",
     SubTitle: "所有设置选项",
-
+    Tabs:{
+      header:{
+        General: "通用设置",
+        Models: "模型设置",
+      },
+      },
     Danger: {
       Reset: {
         Title: "重置所有设置",

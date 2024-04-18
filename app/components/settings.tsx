@@ -29,6 +29,7 @@ import {
   Select,
   showConfirm,
   showToast,
+  TabHeader,
 } from "./ui-lib";
 import { ModelConfigList } from "./model-config";
 
@@ -571,7 +572,11 @@ export function Settings() {
   const remoteId = updateStore.formatVersion(updateStore.remoteVersion);
   const hasNewVersion = currentVersion !== remoteId;
   const updateUrl = getClientConfig()?.isApp ? RELEASE_URL : UPDATE_URL;
-
+  const [settingIndex, setSettingIndex] = useState(0);
+  function onSelectTab(index: number) {
+    setSettingIndex(index);
+    console.log("index", index);
+  }
   function checkUpdate(force = false) {
     setCheckingUpdate(true);
     updateStore.getLatestVersion(force).then(() => {
@@ -653,254 +658,10 @@ export function Settings() {
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
-
-  return (
-    <ErrorBoundary>
-      <div className="window-header" data-tauri-drag-region>
-        <div className="window-header-title">
-          <div className="window-header-main-title">
-            {Locale.Settings.Title}
-          </div>
-          <div className="window-header-sub-title">
-            {Locale.Settings.SubTitle}
-          </div>
-        </div>
-        <div className="window-actions">
-          <div className="window-action-button"></div>
-          <div className="window-action-button"></div>
-          <div className="window-action-button">
-            <IconButton
-              icon={<CloseIcon />}
-              onClick={() => navigate(Path.Home)}
-              bordered
-            />
-          </div>
-        </div>
-      </div>
-      <div className={styles["settings"]}>
-        <List>
-          <ListItem title={Locale.Settings.Avatar}>
-            <Popover
-              onClose={() => setShowEmojiPicker(false)}
-              content={
-                <AvatarPicker
-                  onEmojiClick={(avatar: string) => {
-                    updateConfig((config) => (config.avatar = avatar));
-                    setShowEmojiPicker(false);
-                  }}
-                />
-              }
-              open={showEmojiPicker}
-            >
-              <div
-                className={styles.avatar}
-                onClick={() => {
-                  setShowEmojiPicker(!showEmojiPicker);
-                }}
-              >
-                <Avatar avatar={config.avatar} />
-              </div>
-            </Popover>
-          </ListItem>
-
-          <ListItem
-            title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
-            subTitle={
-              checkingUpdate
-                ? Locale.Settings.Update.IsChecking
-                : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
-            }
-          >
-            {checkingUpdate ? (
-              <LoadingIcon />
-            ) : hasNewVersion ? (
-              <Link href={updateUrl} target="_blank" className="link">
-                {Locale.Settings.Update.GoToUpdate}
-              </Link>
-            ) : (
-              <IconButton
-                icon={<ResetIcon></ResetIcon>}
-                text={Locale.Settings.Update.CheckUpdate}
-                onClick={() => checkUpdate(true)}
-              />
-            )}
-          </ListItem>
-
-          <ListItem title={Locale.Settings.SendKey}>
-            <Select
-              value={config.submitKey}
-              onChange={(e) => {
-                updateConfig(
-                  (config) =>
-                    (config.submitKey = e.target.value as any as SubmitKey),
-                );
-              }}
-            >
-              {Object.values(SubmitKey).map((v) => (
-                <option value={v} key={v}>
-                  {v}
-                </option>
-              ))}
-            </Select>
-          </ListItem>
-
-          <ListItem title={Locale.Settings.Theme}>
-            <Select
-              value={config.theme}
-              onChange={(e) => {
-                updateConfig(
-                  (config) => (config.theme = e.target.value as any as Theme),
-                );
-              }}
-            >
-              {Object.values(Theme).map((v) => (
-                <option value={v} key={v}>
-                  {v}
-                </option>
-              ))}
-            </Select>
-          </ListItem>
-
-          <ListItem title={Locale.Settings.Lang.Name}>
-            <Select
-              value={getLang()}
-              onChange={(e) => {
-                changeLang(e.target.value as any);
-              }}
-            >
-              {AllLangs.map((lang) => (
-                <option value={lang} key={lang}>
-                  {ALL_LANG_OPTIONS[lang]}
-                </option>
-              ))}
-            </Select>
-          </ListItem>
-
-          <ListItem
-            title={Locale.Settings.FontSize.Title}
-            subTitle={Locale.Settings.FontSize.SubTitle}
-          >
-            <InputRange
-              title={`${config.fontSize ?? 14}px`}
-              value={config.fontSize}
-              min="12"
-              max="40"
-              step="1"
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.fontSize = Number.parseInt(e.currentTarget.value)),
-                )
-              }
-            ></InputRange>
-          </ListItem>
-
-          <ListItem
-            title={Locale.Settings.AutoGenerateTitle.Title}
-            subTitle={Locale.Settings.AutoGenerateTitle.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={config.enableAutoGenerateTitle}
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.enableAutoGenerateTitle = e.currentTarget.checked),
-                )
-              }
-            ></input>
-          </ListItem>
-
-          <ListItem
-            title={Locale.Settings.SendPreviewBubble.Title}
-            subTitle={Locale.Settings.SendPreviewBubble.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={config.sendPreviewBubble}
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.sendPreviewBubble = e.currentTarget.checked),
-                )
-              }
-            ></input>
-          </ListItem>
-        </List>
-
-        <SyncItems />
-
-        <List>
-          <ListItem
-            title={Locale.Settings.Mask.Splash.Title}
-            subTitle={Locale.Settings.Mask.Splash.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={!config.dontShowMaskSplashScreen}
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.dontShowMaskSplashScreen =
-                      !e.currentTarget.checked),
-                )
-              }
-            ></input>
-          </ListItem>
-
-          <ListItem
-            title={Locale.Settings.Mask.Builtin.Title}
-            subTitle={Locale.Settings.Mask.Builtin.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={config.hideBuiltinMasks}
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.hideBuiltinMasks = e.currentTarget.checked),
-                )
-              }
-            ></input>
-          </ListItem>
-        </List>
-
-        <List>
-          <ListItem
-            title={Locale.Settings.Prompt.Disable.Title}
-            subTitle={Locale.Settings.Prompt.Disable.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={config.disablePromptHint}
-              onChange={(e) =>
-                updateConfig(
-                  (config) =>
-                    (config.disablePromptHint = e.currentTarget.checked),
-                )
-              }
-            ></input>
-          </ListItem>
-
-          <ListItem
-            title={Locale.Settings.Prompt.List}
-            subTitle={Locale.Settings.Prompt.ListCount(
-              builtinCount,
-              customCount,
-            )}
-          >
-            <IconButton
-              icon={<EditIcon />}
-              text={Locale.Settings.Prompt.Edit}
-              onClick={() => setShowPromptModal(true)}
-            />
-          </ListItem>
-        </List>
-
-        <List id={SlotID.CustomModel}>
-          {showAccessCode && (
+  const generalSettings = (
+    <div className={styles["settings"]}>
+      <List>
+      {showAccessCode && (
             <ListItem
               title={Locale.Settings.Access.AccessCode.Title}
               subTitle={Locale.Settings.Access.AccessCode.SubTitle}
@@ -917,6 +678,245 @@ export function Settings() {
               />
             </ListItem>
           )}
+        <ListItem title={Locale.Settings.Avatar}>
+          <Popover
+            onClose={() => setShowEmojiPicker(false)}
+            content={
+              <AvatarPicker
+                onEmojiClick={(avatar: string) => {
+                  updateConfig((config) => (config.avatar = avatar));
+                  setShowEmojiPicker(false);
+                }}
+              />
+            }
+            open={showEmojiPicker}
+          >
+            <div
+              className={styles.avatar}
+              onClick={() => {
+                setShowEmojiPicker(!showEmojiPicker);
+              }}
+            >
+              <Avatar avatar={config.avatar} />
+            </div>
+          </Popover>
+        </ListItem>
+
+        {/* <ListItem
+      title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
+      subTitle={
+        checkingUpdate
+          ? Locale.Settings.Update.IsChecking
+          : hasNewVersion
+          ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
+          : Locale.Settings.Update.IsLatest
+      }
+    >
+      {checkingUpdate ? (
+        <LoadingIcon />
+      ) : hasNewVersion ? (
+        <Link href={updateUrl} target="_blank" className="link">
+          {Locale.Settings.Update.GoToUpdate}
+        </Link>
+      ) : (
+        <IconButton
+          icon={<ResetIcon></ResetIcon>}
+          text={Locale.Settings.Update.CheckUpdate}
+          onClick={() => checkUpdate(true)}
+        />
+      )}
+    </ListItem> */}
+
+        <ListItem title={Locale.Settings.SendKey}>
+          <Select
+            value={config.submitKey}
+            onChange={(e) => {
+              updateConfig(
+                (config) =>
+                  (config.submitKey = e.target.value as any as SubmitKey),
+              );
+            }}
+          >
+            {Object.values(SubmitKey).map((v) => (
+              <option value={v} key={v}>
+                {v}
+              </option>
+            ))}
+          </Select>
+        </ListItem>
+
+        <ListItem title={Locale.Settings.Theme}>
+          <Select
+            value={config.theme}
+            onChange={(e) => {
+              updateConfig(
+                (config) => (config.theme = e.target.value as any as Theme),
+              );
+            }}
+          >
+            {Object.values(Theme).map((v) => (
+              <option value={v} key={v}>
+                {v}
+              </option>
+            ))}
+          </Select>
+        </ListItem>
+
+        <ListItem title={Locale.Settings.Lang.Name}>
+          <Select
+            value={getLang()}
+            onChange={(e) => {
+              changeLang(e.target.value as any);
+            }}
+          >
+            {AllLangs.map((lang) => (
+              <option value={lang} key={lang}>
+                {ALL_LANG_OPTIONS[lang]}
+              </option>
+            ))}
+          </Select>
+        </ListItem>
+
+        <ListItem
+          title={Locale.Settings.FontSize.Title}
+          subTitle={Locale.Settings.FontSize.SubTitle}
+        >
+          <InputRange
+            title={`${config.fontSize ?? 14}px`}
+            value={config.fontSize}
+            min="12"
+            max="40"
+            step="1"
+            onChange={(e) =>
+              updateConfig(
+                (config) =>
+                  (config.fontSize = Number.parseInt(e.currentTarget.value)),
+              )
+            }
+          ></InputRange>
+        </ListItem>
+
+        <ListItem
+          title={Locale.Settings.AutoGenerateTitle.Title}
+          subTitle={Locale.Settings.AutoGenerateTitle.SubTitle}
+        >
+          <input
+            type="checkbox"
+            checked={config.enableAutoGenerateTitle}
+            onChange={(e) =>
+              updateConfig(
+                (config) =>
+                  (config.enableAutoGenerateTitle = e.currentTarget.checked),
+              )
+            }
+          ></input>
+        </ListItem>
+
+        <ListItem
+          title={Locale.Settings.SendPreviewBubble.Title}
+          subTitle={Locale.Settings.SendPreviewBubble.SubTitle}
+        >
+          <input
+            type="checkbox"
+            checked={config.sendPreviewBubble}
+            onChange={(e) =>
+              updateConfig(
+                (config) =>
+                  (config.sendPreviewBubble = e.currentTarget.checked),
+              )
+            }
+          ></input>
+        </ListItem>
+      </List>
+
+      {/* <SyncItems /> */}
+
+      <List>
+        <ListItem
+          title={Locale.Settings.Mask.Splash.Title}
+          subTitle={Locale.Settings.Mask.Splash.SubTitle}
+        >
+          <input
+            type="checkbox"
+            checked={!config.dontShowMaskSplashScreen}
+            onChange={(e) =>
+              updateConfig(
+                (config) =>
+                  (config.dontShowMaskSplashScreen = !e.currentTarget.checked),
+              )
+            }
+          ></input>
+        </ListItem>
+
+        <ListItem
+          title={Locale.Settings.Mask.Builtin.Title}
+          subTitle={Locale.Settings.Mask.Builtin.SubTitle}
+        >
+          <input
+            type="checkbox"
+            checked={config.hideBuiltinMasks}
+            onChange={(e) =>
+              updateConfig(
+                (config) => (config.hideBuiltinMasks = e.currentTarget.checked),
+              )
+            }
+          ></input>
+        </ListItem>
+      </List>
+
+      <List>
+        <ListItem
+          title={Locale.Settings.Prompt.Disable.Title}
+          subTitle={Locale.Settings.Prompt.Disable.SubTitle}
+        >
+          <input
+            type="checkbox"
+            checked={config.disablePromptHint}
+            onChange={(e) =>
+              updateConfig(
+                (config) =>
+                  (config.disablePromptHint = e.currentTarget.checked),
+              )
+            }
+          ></input>
+        </ListItem>
+
+        <ListItem
+          title={Locale.Settings.Prompt.List}
+          subTitle={Locale.Settings.Prompt.ListCount(builtinCount, customCount)}
+        >
+          <IconButton
+            icon={<EditIcon />}
+            text={Locale.Settings.Prompt.Edit}
+            onClick={() => setShowPromptModal(true)}
+          />
+        </ListItem>
+        
+      </List>
+
+      {shouldShowPromptModal && (
+        <UserPromptModal onClose={() => setShowPromptModal(false)} />
+      )}
+
+      <DangerItems />
+    </div>
+  );
+  const tabHeader = (
+    <TabHeader
+      tabs={[
+        Locale.Settings.Tabs.header.General,
+        Locale.Settings.Tabs.header.Models,
+      ]}
+      activeTabIndex={settingIndex}
+      onTabChange={onSelectTab}
+    />
+  );
+  var content = generalSettings;
+  if (settingIndex == 1) {
+    content = (
+      <div className={styles["settings"]}>
+        <List id={SlotID.CustomModel}>
+          
 
           {!accessStore.hideUserApiKey && (
             <>
@@ -1245,13 +1245,34 @@ export function Settings() {
             }}
           />
         </List>
-
-        {shouldShowPromptModal && (
-          <UserPromptModal onClose={() => setShowPromptModal(false)} />
-        )}
-
-        <DangerItems />
       </div>
+    );
+  }
+  return (
+    <ErrorBoundary>
+      <div className="window-header" data-tauri-drag-region>
+        <div className="window-header-title">
+          <div className="window-header-main-title">
+            {Locale.Settings.Title}
+          </div>
+          <div className="window-header-sub-title">
+            {/* {Locale.Settings.SubTitle} */}
+            {tabHeader}
+          </div>
+        </div>
+        <div className="window-actions">
+          <div className="window-action-button"></div>
+          <div className="window-action-button"></div>
+          <div className="window-action-button">
+            <IconButton
+              icon={<CloseIcon />}
+              onClick={() => navigate(Path.Home)}
+              bordered
+            />
+          </div>
+        </div>
+      </div>
+      {content}
     </ErrorBoundary>
   );
 }
