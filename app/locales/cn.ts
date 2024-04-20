@@ -1,3 +1,4 @@
+import { create } from "domain";
 import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
 
@@ -412,6 +413,16 @@ const cn = {
   },
   FineTuned: {
     Sysmessage: "你是一个助手",
+  },
+  KnowledgeBase:{
+    name:"知识库",
+    create:"创建知识库",
+    createDesc:"导入您自己的文本数据以增强LLM的上下文",
+    edit:"编辑知识库",
+    subTitle:"点击返回知识库首页",
+    upload:"拖拽文件至此上传文件!",
+    uploadDesc:(list:string[])=>`支持${list.join("、")}等文件格式`,
+    next:"下一步",
   },
   Mask: {
     Name: "面具",

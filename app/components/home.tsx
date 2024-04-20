@@ -56,6 +56,10 @@ const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
   loading: () => <Loading noLogo />,
 });
 
+const KnowLedgeBase = dynamic(async () => (await import("./knowledge-base")).KnowledgeBase, {
+  loading: () => <Loading noLogo />,
+});
+
 export function useSwitchTheme() {
   const config = useAppConfig();
 
@@ -160,6 +164,7 @@ function Screen() {
               <Route path={Path.Masks} element={<MaskPage />} />
               <Route path={Path.Chat} element={<Chat />} />
               <Route path={Path.Settings} element={<Settings />} />
+              <Route path={Path.KnowledgeBase} element={<KnowLedgeBase />} />
             </Routes>
           </div>
         </>

@@ -1,0 +1,70 @@
+.container {
+    display: flex;
+    padding: 20px;
+    background-color: white;
+}
+.card {
+    height: 100px;
+    width: 200px;
+    background-color: #EEEEEE;
+    border-radius: 8px;
+    padding:8px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    &:hover {
+        background-color: #DDDDDD
+    }
+    &-header {
+        display: flex;
+        height: 20px;
+    }
+    &-title {
+        font-size: 15px;
+        font-weight: bold;
+        margin-left: 8px;
+    }
+    &-description {
+        margin-top: 8px;
+        font-size: 12px;
+        margin-bottom: 8px; 
+    }
+}
+
+.upload {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    border: 2px dashed #C4C4C4;
+    border-radius: 8px;
+    background-color: #F9F9F9;
+    color: #C4C4C4;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover {
+        background-color: #F0F0F0;
+    }
+
+    
+}
+
+.nextButton {
+    margin-top: 8px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    width: 60px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    &:hover {
+        background-color: #0056b3;
+    }
+}

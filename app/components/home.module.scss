@@ -52,10 +52,12 @@
   .sidebar-header-bar {
     display: flex;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 
     .sidebar-bar-button {
       flex-grow: 1;
-
+      margin-top: 4px;
+      align-self: center;
       &:not(:last-child) {
         margin-right: 10px;
       }
