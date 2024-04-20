@@ -133,15 +133,35 @@ interface uploadFilesBlockProps {
 function UpLoadFilesBlock(){
     return (
         <div >
-            <div className={styles["upload"]}>
+            <input
+                type="file"
+                multiple
+                style={{ display: 'none' }}
+                onChange={(event) => {
+                    //const files = Array.from(event.target.files);
+                    // handle the files
+                }}
+            />
+            <div
+                className={styles["upload"]}
+                onDragOver={(event) => {
+                    event.preventDefault();
+                }}
+                onDrop={(event) => {
+                    event.preventDefault();
+                    const files = Array.from(event.dataTransfer.files);
+                    console.log(files[0].name)
+                    // handle the files
+                }}
+            >
                 <div>
-                <Image src={UploadIcon} alt={""} width={20} height={20} />
-                <span>{Locale.KnowledgeBase.upload}</span>
+                    <Image src={UploadIcon} alt={""} width={20} height={20} />
+                    <span>{Locale.KnowledgeBase.upload}</span>
                 </div>
                 
                 <div>
-                {Locale.KnowledgeBase.uploadDesc(['TXT','MARKDOWN','PDF'])}
-            </div>
+                    {Locale.KnowledgeBase.uploadDesc(['TXT','MARKDOWN','PDF'])}
+                </div>
             </div>
             <div className={styles["nextButton"]}>{Locale.KnowledgeBase.next}</div>
         </div>
